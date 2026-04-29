@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>炭水化物入力フォーム</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; padding: 20px; }
+    .form-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .btn-submit { width: 100%; margin-top: 20px; }
+    #amount-hint { font-size: 0.85em; color: #6c757d; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container form-container">
+    <h4 class="mb-4 text-center">食事記録</h4>
+    
+    <div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">1. 環境</label>
+        <select class="form-select" id="environment">
+          <option value="" selected disabled>選択してください</option>
+          <option value="内食">内食（自炊など）</option>
+          <option value="外食">外食・中食（コンビニ等）</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">2. 種類</label>
+        <select class="form-select" id="type" onchange="updateHint()">
+          <option value="" selected disabled>選択してください</option>
+          <option value="ごはん">ごはん</option>
+          <option value="食パン">食パン</option>
+          <option value="ロールパン">ロールパン</option>
+          <option value="パスタ">パスタ</option>
+          <option value="うどん">うどん</option>
+          <option value="ラーメン">ラーメン</option>
+          <option value="そば">そば</option>
+          <option value="餅">餅</option>
+          <option value="バナナ">バナナ</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">3. 分量</label>
+        <input type="number" step="0.1" class="form-control" id="amount" placeholder="数値を入力">
+        <div id="amount-hint">※種類を選択すると入力の目安が表示されます。</div>
+      </div>
+
+      <button type="button" class="btn btn-success btn-submit" onclick="sendData()">記録を送信する</button>
+    </div>
+  </div>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    // ▼ ここに「LIFF ID」（例: 1234567890-abcdefgh）を必ず入力してください ▼
+    const LIFF_ID = "2009930169-jM4OEirS"; 
+
+    const hints = {
+      "ごはん": "例: 200 (g単位で入力)",
+      "食パン": "例: 1.5 (6枚切り1枚を「1」として入力)",
+      "ロールパン": "例: 3 (1個を「1」として入力)",
+      "パスタ": "例: 1.5 (1人前/乾麺100gを「1」として入力)",
+      "うどん": "例: 1 (1人前/ゆで200gを「1」として入力)",
+      "ラーメン": "例: 1.5 (1人前/中華麺1玉を「1」として入力)",
+      "そば": "例: 1 (1人前/ゆで200gを「1」として入力)",
+      "餅": "例: 2 (切り餅1個を「1」として入力)",
+      "バナナ": "例: 1 (中1本を「1」として入力)"
+    };
+
+    function updateHint() {
+      const selectedType = document.getElementById('type').value;
+      const hintDiv = document.getElementById('amount-hint');
+      hintDiv.textContent = hints[selectedType] || "数値を入力してください。";
+    }
+
+    // LIFFの初期化
+    liff.init({ liffId: LIFF_ID })
+      .then(() => {
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        }
+      })
+      .catch((err) => {
+        alert("LIFFの初期化エラー: " + err.message);
+      });
+
+    // ボタンが押されたときの送信処理
+    function sendData() {
+      const environment = document.getElementById('environment').value;
+      const type = document.getElementById('type').value;
+      const amount = document.getElementById('amount').value;
+
+      // 未入力チェック
+      if (!environment || !type || !amount) {
+        alert("すべての項目を選択・入力してください。");
+        return;
+      }
+
+      // LIFF IDチェック
+      if (LIFF_ID === "YOUR_LIFF_ID" || LIFF_ID === "") {
+        alert("エラー：GASのコード内にLIFF IDが入力されていません。");
+        return;
+      }
+
+      // 送信するテキストを作成
+      const messageText = `${environment} ${type} ${amount}`;
+
+      // LIFF送信処理
+      if (liff.isInClient()) {
+        liff.sendMessages([
+          { type: 'text', text: messageText }
+        ]).then(() => {
+          liff.closeWindow(); // 成功したら画面を閉じる
+        }).catch((err) => {
+          // エラーが起きても画面は白くならず、ここに原因が表示されます
+          alert("【エラー詳細】\n" + err.message);
+        });
+      } else {
+        alert('この画面はLINEアプリ内から開いてください。');
+      }
+    }
+  </script>
+</body>
+</html>
