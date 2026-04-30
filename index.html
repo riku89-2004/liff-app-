@@ -32,13 +32,13 @@
         <select class="form-select" id="type" onchange="updateHint()">
           <option value="" selected disabled>選択してください</option>
           <option value="ごはん">ごはん</option>
+          <option value="茶碗・丼">茶碗・丼</option>
           <option value="食パン">食パン</option>
           <option value="菓子パン">菓子パン</option>
           <option value="パスタ">パスタ</option>
           <option value="うどん">うどん</option>
           <option value="ラーメン">ラーメン</option>
           <option value="そば">そば</option>
-          <option value="牛丼">牛丼</option>
           <option value="餅">餅</option>
           <option value="バナナ">バナナ</option>
           <option value="その他">その他（炭水化物量を直入）</option>
@@ -61,14 +61,14 @@
     const LIFF_ID = "2009930169-jM4OEirS"; 
 
     const hints = {
-      "ごはん": "例: 200 (g単位で入力)",
+      "ごはん": "例: 300 (g単位で入力)",
+      "茶碗・丼": "例: 並を1、大盛りを1.5として入力",
       "食パン": "例: 1.5 (6枚切り1枚を「1」として入力)",
       "菓子パン": "例: 1 (1個を「1」として入力。平均的な値で計算されます)",
       "パスタ": "例: 1.5 (1人前/乾麺100gを「1」として入力)",
       "うどん": "例: 1 (1人前/ゆで200gを「1」として入力)",
       "ラーメン": "例: 1.5 (1人前/中華麺1玉を「1」として入力)",
       "そば": "例: 1 (1人前/ゆで200gを「1」として入力)",
-      "牛丼": "例: 並を1、大を1.5、特を2として入力",
       "餅": "例: 2 (切り餅1個を「1」として入力)",
       "バナナ": "例: 1 (1本を「1」として入力)",
       "その他": "例: 50 (炭水化物量(g)を直接入力してください)"
